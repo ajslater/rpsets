@@ -43,9 +43,9 @@ def warmup_sets(args: Namespace) -> Tuple[float, ...]:
 
 def backoff_sets(args: Namespace) -> Tuple[float, ...]:
     """Create the backoff sets."""
-    result: List[float] = []
-    for i in range(0, args.sets):
-        result += [args.percentage ** i]
+    result: List[float] = [1]
+    for i in range(1, args.sets):
+        result += [args.percentage * result[-1]]
     return tuple(result)
 
 
