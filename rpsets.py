@@ -7,7 +7,7 @@ from typing import List, Tuple
 DEFAULT_PERCENTAGE = 0.95
 DEFAULT_WARMUP_SETS = 2
 DEFAULT_SETS = 3
-DEFAULT_ROUND_BASE = 5.0
+DEFAULT_ROUND_BASE = 2.5
 WARMUP_BACKOFF = 0.9
 WARMUP_MIN = 0.65
 WARMUP_MAX = 0.85
@@ -98,7 +98,7 @@ def parse_args():
         type=int,
         dest="bodyweight",
         default=None,
-        help=f"Bodyweight for bodyweight exercises.",
+        help="Bodyweight for bodyweight exercises.",
     )
     parser.add_argument(
         "-s",
