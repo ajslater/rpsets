@@ -4,19 +4,14 @@ import argparse
 from argparse import Namespace
 from typing import List, Tuple
 
-DEFAULT_PERCENTAGE = 0.95
+DEFAULT_PERCENTAGE = 5
 DEFAULT_WARMUP_SETS = 2
 DEFAULT_SETS = 3
 DEFAULT_ROUND_BASE = 2.5
 WARMUP_BACKOFF = 0.9
-WARMUP_MIN = 0.65
-WARMUP_MAX = 0.85
+WARMUP_MIN = 0.60
+WARMUP_MAX = 0.75
 WARMUP_RANGE = WARMUP_MAX - WARMUP_MIN
-
-
-def calculate_backoff(backoff_str: str) -> float:
-    """Caclulate the multiplier for backoff sets from an integer."""
-    return (100 - float(backoff_str)) / 100
 
 
 def warmup_sets(args: Namespace) -> Tuple[float, ...]:
@@ -27,15 +22,14 @@ def warmup_sets(args: Namespace) -> Tuple[float, ...]:
     percent = WARMUP_MIN
     if args.warmup_sets == 1:
         percent += WARMUP_RANGE / 2
+        step = 0
     else:
         step = WARMUP_RANGE / (args.warmup_sets - 1)
 
     i = 0
-    while True:
+    while i < args.warmup_sets:
         result += [percent]
         i += 1
-        if i >= args.warmup_sets:
-            break
         percent += step
 
     return tuple(result)
@@ -44,8 +38,11 @@ def warmup_sets(args: Namespace) -> Tuple[float, ...]:
 def backoff_sets(args: Namespace) -> Tuple[float, ...]:
     """Create the backoff sets."""
     result: List[float] = [1]
-    for i in range(1, args.sets):
-        result += [args.percentage * result[-1]]
+    print(args.percentage)
+    multiplier = (100 - float(args.percentage)) / 100
+    for _ in range(1, args.sets):
+        last_set = result[-1]
+        result += [multiplier * last_set]
     return tuple(result)
 
 
@@ -87,7 +84,7 @@ def parse_args():
         "--percentage",
         action="store",
         dest="percentage",
-        type=calculate_backoff,
+        type=float,
         default=DEFAULT_PERCENTAGE,
         help=f"Backoff percentage. Default: {DEFAULT_PERCENTAGE}",
     )
